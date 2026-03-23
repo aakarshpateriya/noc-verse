@@ -1,33 +1,22 @@
 import { useState } from "react";
 
-function Terminal() {
+function Terminal({ scenario }) {
   const [history, setHistory] = useState([
-    { type: "output", text: "Welcome to NOC VM" },
+    { type: "output", text: "Connected to VM..." },
   ]);
   const [input, setInput] = useState("");
+  const [state, setState] = useState({ ...scenario.state });
 
-  // Command handler
   const handleCommand = (cmd) => {
-    let output = "";
+    const commandFunc = scenario.commands[cmd];
 
-    switch (cmd.trim()) {
-      case "df -h":
-        output = "/dev/sda1   95% used";
-        break;
-      case "free -m":
-        output = "Memory: 80% used";
-        break;
-      case "ls":
-        output = "log1.log log2.log large.log";
-        break;
-      case "help":
-        output = "Try commands like df -h, free -m, ls";
-        break;
-      default:
-        output = `Command not found: ${cmd}`;
+    if (commandFunc) {
+      const result = commandFunc(state);
+      setState({ ...state }); // update state
+      return result;
     }
 
-    return output;
+    return `Command not found: ${cmd}`;
   };
 
   const handleSubmit = (e) => {
@@ -58,7 +47,7 @@ function Terminal() {
         </div>
       ))}
 
-      <form onSubmit={handleSubmit} className="mt-2">
+      <form onSubmit={handleSubmit}>
         <span className="text-blue-400">$ </span>
         <input
           className="bg-black outline-none text-green-400 w-[90%]"
