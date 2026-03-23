@@ -1,10 +1,14 @@
 export const alertScenarios = {
   1: {
     name: "Disk Utilization High",
+
+    // 🔹 Initial VM State
     state: {
       diskUsage: 95,
       logsPresent: true,
     },
+
+    // 🔹 Commands simulation
     commands: {
       "df -h": (state) => `/dev/sda1   ${state.diskUsage}% used`,
 
@@ -22,6 +26,16 @@ export const alertScenarios = {
         return "No such file";
       },
     },
-    solution: ["df -h", "cd /var/log", "rm huge.log"],
+
+    // 🔹 Validation Logic
+    validate: (state) => state.diskUsage < 70,
+
+    // 🔹 SOP Steps
+    sop: [
+      "Check disk usage using df -h",
+      "Navigate to /var/log",
+      "Identify large files",
+      "Delete unnecessary logs",
+    ],
   },
 };

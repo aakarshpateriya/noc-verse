@@ -4,9 +4,14 @@ function Terminal({ scenario }) {
   const [history, setHistory] = useState([
     { type: "output", text: "Connected to VM..." },
   ]);
+
   const [input, setInput] = useState("");
+
   const [state, setState] = useState({ ...scenario.state });
 
+  const [isResolved, setIsResolved] = useState(false);
+
+  // 🔹 Command handler
   const handleCommand = (cmd) => {
     const commandFunc = scenario.commands[cmd];
 
@@ -19,17 +24,30 @@ function Terminal({ scenario }) {
     return `Command not found: ${cmd}`;
   };
 
+  // 🔹 On command submit
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    if (isResolved) return;
+
     const output = handleCommand(input);
 
-    setHistory([
+    let newHistory = [
       ...history,
       { type: "input", text: input },
       { type: "output", text: output },
-    ]);
+    ];
 
+    // 🔥 Check if alert resolved
+    if (scenario.validate(state)) {
+      newHistory.push({
+        type: "output",
+        text: "✅ Alert Resolved Successfully!",
+      });
+      setIsResolved(true);
+    }
+
+    setHistory(newHistory);
     setInput("");
   };
 
@@ -47,15 +65,17 @@ function Terminal({ scenario }) {
         </div>
       ))}
 
-      <form onSubmit={handleSubmit}>
-        <span className="text-blue-400">$ </span>
-        <input
-          className="bg-black outline-none text-green-400 w-[90%]"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          autoFocus
-        />
-      </form>
+      {!isResolved && (
+        <form onSubmit={handleSubmit} className="mt-2">
+          <span className="text-blue-400">$ </span>
+          <input
+            className="bg-black outline-none text-green-400 w-[90%]"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            autoFocus
+          />
+        </form>
+      )}
     </div>
   );
 }
