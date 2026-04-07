@@ -2,15 +2,20 @@ export const alertScenarios = {
   1: {
     name: "Disk Utilization High",
 
-    // 🔹 Initial VM State
     state: {
       diskUsage: 95,
       logsPresent: true,
     },
 
-    // 🔹 Commands simulation
     commands: {
-      "df -h": (state) => `/dev/sda1   ${state.diskUsage}% used`,
+      "df -h": (state) => `Filesystem      Size  Used Avail Use% Mounted on
+udev            1.9G     0  1.9G   0% /dev
+tmpfs           393M  1.6M  391M   1% /run
+/dev/sda1        40G   38G  2.0G  ${state.diskUsage}% /
+tmpfs           2.0G     0  2.0G   0% /dev/shm
+tmpfs           5.0M     0  5.0M   0% /run/lock
+/dev/sda15      105M  6.1M   99M   6% /boot/efi
+tmpfs           393M  4.0K  393M   1% /run/user/1000`,
 
       "cd /var/log": () => "Moved to /var/log",
 
@@ -27,10 +32,8 @@ export const alertScenarios = {
       },
     },
 
-    // 🔹 Validation Logic
     validate: (state) => state.diskUsage < 70,
 
-    // 🔹 SOP Steps
     sop: [
       "Check disk usage using df -h",
       "Navigate to /var/log",

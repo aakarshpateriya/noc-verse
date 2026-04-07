@@ -17,12 +17,10 @@ function Simulator() {
       <h1 className="text-2xl mb-4">{scenario.name}</h1>
 
       <div className="grid grid-cols-3 gap-4">
-        {/* Terminal */}
         <div className="col-span-2">
           <Terminal scenario={scenario} />
         </div>
 
-        {/* SOP */}
         <SOPPanel sop={scenario.sop} />
       </div>
     </div>
