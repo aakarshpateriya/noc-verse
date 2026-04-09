@@ -2,11 +2,26 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import Bytez from "bytez.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.join(__dirname, "config.env") });
 
 const app = express();
-app.use(cors());
+
+const allowedOrigin =
+  process.env.FRONTEND_URL ||
+  process.env.VITE_REACT_APP_URL ||
+  process.env.Vite_react_app_URL;
+
+app.use(
+  cors({
+    origin: allowedOrigin ? [allowedOrigin, "http://localhost:5173"] : true,
+  })
+);
 app.use(express.json());
 
 const bytezApiKey = process.env.BYTEZ_API_KEY || process.env.OPENAI_API_KEY;

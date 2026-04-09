@@ -1,7 +1,12 @@
 import axios from "axios";
 
+const rawBaseUrl = import.meta.env.VITE_API_URL?.trim();
+const normalizedBaseUrl = rawBaseUrl
+  ? rawBaseUrl.replace(/\/+$/, "")
+  : "";
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "/api",
+  baseURL: normalizedBaseUrl || "/api",
 });
 
 export const getAIHelp = async (data) => {
